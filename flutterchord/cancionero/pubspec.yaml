@@ -36,6 +36,19 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   flutter_chord: ^0.1.2
+  animations: ^2.0.7
+  isar: ^3.1.0+1
+  searchable_listview: ^2.10.1
+  path_provider: ^2.1.2
+  equatable: ^2.0.5
+  flutter_bloc: ^8.1.3
+  go_router: ^13.1.0
+  url_launcher: ^6.2.4
+  flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.3.7
+  isar_flutter_libs: ^3.1.0+1
+  flutter_localization: ^0.2.0
+  flutter_hooks: ^0.19.0
 
 dev_dependencies:
   flutter_test:
@@ -47,17 +60,37 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+  isar_generator: ^3.1.0+1
+  build_runner: ^2.4.8
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icon_guitar.png"
+  remove_alpha_ios: true
+  min_sdk_android: 21 # android min sdk min:16, default 21
+
+flutter_native_splash:
+  color: "#F4F4F4"
+  image: assets/guitarsplash.png
+  android: true
+  ios: false
+  web: false
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
+
 flutter:
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - assets/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

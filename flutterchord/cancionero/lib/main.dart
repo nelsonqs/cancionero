@@ -1,21 +1,55 @@
+import 'package:cancionero/common/router/app_router.dart';
+import 'package:cancionero/core/app_theme.dart';
+import 'package:cancionero/features/cancionero/presentation/cubit/cancionero_cubit.dart';
+import 'package:cancionero/model/isar/cancionero.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chord/flutter_chord.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:isar/isar.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 
-void main() {
-  runApp(MyApp());
+Future<void> main() async {
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  final dirdos = await getApplicationDocumentsDirectory();
+  if (dirdos.existsSync()) {
+    final isar = await Isar.open([CancioneroSchema], directory: dirdos.path);
+    runApp(MyApp(isar: isar));
+  }
 }
 
 class MyApp extends StatelessWidget {
-   // This widget is the root of your application.
+  const MyApp({Key? key, required this.isar}) : super(key: key);
+  final Isar isar;
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    final scaffoldKey = GlobalKey<ScaffoldMessengerState>();
+    final FlutterLocalization _localization = FlutterLocalization.instance;
+    FlutterNativeSplash.remove();
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<CancioneroCubit>(
+            create: (BuildContext context) => CancioneroCubit())
+      ],
+      child: MaterialApp.router(
+          scaffoldMessengerKey: scaffoldKey,
+          title: 'Cancionero ICEL',
+          debugShowCheckedModeBanner: false,
+          theme: AppThemes.appThemeData[AppTheme.lightTheme]!,
+          routerConfig: appRouter),
+    );
+
+    /*return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Chord',
-      themeMode: ThemeMode.dark,
-      darkTheme: ThemeData.dark(),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
+        useMaterial3: true,
+      ),
       home: HomePage(),
-    );
+    );*/
   }
 }
 
