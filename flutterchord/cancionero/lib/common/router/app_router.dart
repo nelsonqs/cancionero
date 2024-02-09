@@ -1,3 +1,4 @@
+import 'package:cancionero/features/cancionero/screens/cancionero_edit.dart';
 import 'package:cancionero/features/cancionero/screens/cancionero_list_screen.dart';
 import 'package:cancionero/features/cancionero/screens/cancionero_screen.dart';
 import 'package:cancionero/features/home_screen.dart';
@@ -19,5 +20,9 @@ final appRouter = GoRouter(routes: [
   GoRoute(
   path: '/detail/:index',
   builder: (context, state) => CancioneroScreen(index: state.pathParameters['index']!),
+  ),
+  GoRoute(
+  path: '/update/:index',
+  builder: (context, state) => CancioneroEdit(index: state.pathParameters['index']!),
   ),
 ]);

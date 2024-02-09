@@ -1,49 +1,66 @@
+import 'package:cancionero/features/cancionero/presentation/cubit/cancionero_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chord/flutter_chord.dart';
 
-class CancioneroScreen extends StatefulWidget {
+class CancioneroScreen extends StatelessWidget {
   const CancioneroScreen({
     Key? key,
     required this.index,
   }) : super(key: key);
+
   final String index;
-
- @override
-  _CancioneroScreenState createState() => _CancioneroScreenState();
-}
-
-class _CancioneroScreenState extends State<CancioneroScreen> {
-  final chordStyle = TextStyle(fontSize: 20, color: Colors.green);
-  final textStyle = TextStyle(fontSize: 18, color: Colors.white);
-  String _lyrics = '';
-  int transposeIncrement = 0;
-  int scrollSpeed = 0;
+  final chordStyle = const TextStyle(fontSize: 16, color: Colors.green);
+  final textStyle = const TextStyle(fontSize: 16, color: Colors.white);
 
   @override
   Widget build(BuildContext context) {
+    final dataBlock = context.watch<CancioneroCubit>();
     return Scaffold(
       appBar: AppBar(
-        title: Text('Flutter Chord Example'),
+        title: const Text('Cancionero'),
       ),
       body: Column(
         children: [
           Expanded(
             child: Container(
               padding: const EdgeInsets.all(12.0),
-              color: Colors.teal,
-              child: TextFormField(
-                initialValue: _lyrics,
-                style: textStyle,
-                maxLines: 50,
-                onChanged: (value) {
-                  setState(() {
-                    _lyrics = value;
-                  });
+              color: Colors.black,
+              child: LyricsRenderer(
+                showChord: false,
+                lyrics: dataBlock.state.dataList
+                    .firstWhere((cancionero) => cancionero.number == index)
+                    .content,
+                textStyle: textStyle,
+                chordStyle: chordStyle,
+                onTapChord: (String chord) {
+                  debugPrint('pressed chord: $chord');
                 },
+                transposeIncrement: dataBlock.state.transposeIncrement,
+                scrollSpeed: dataBlock.state.scrollSpeed,
+                widgetPadding: 24,
+                lineHeight: 4,
+                horizontalAlignment: CrossAxisAlignment.start,
+                leadingWidget: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 16,
+                  ),
+                  child: Text(
+                    dataBlock.state.dataList
+                        .firstWhere((cancionero) => cancionero.number == index)
+                        .title,
+                    style: chordStyle,
+                    // textAlign: TextAlign.center,
+                  ),
+                ),
+                trailingWidget: Text(
+                  'Trailing Widget',
+                  style: chordStyle,
+                ),
               ),
             ),
           ),
-          Divider(),
+          const Divider(),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -53,26 +70,30 @@ class _CancioneroScreenState extends State<CancioneroScreen> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          setState(() {
-                            transposeIncrement--;
-                          });
+                          int value = dataBlock.state.transposeIncrement;
+                          value--;
+                          dataBlock.changedTransposeIncrement(value);
                         },
-                        child: Text('-'),
+                        child: const Text('-',
+                            style:
+                                TextStyle(fontSize: 14, color: Colors.white)),
                       ),
-                      SizedBox(width: 5),
-                      Text('$transposeIncrement'),
-                      SizedBox(width: 5),
+                      const SizedBox(width: 5),
+                      Text(dataBlock.state.transposeIncrement.toString()),
+                      const SizedBox(width: 5),
                       ElevatedButton(
                         onPressed: () {
-                          setState(() {
-                            transposeIncrement++;
-                          });
+                          int value = dataBlock.state.transposeIncrement;
+                          value++;
+                          dataBlock.changedTransposeIncrement(value);
                         },
-                        child: Text('+'),
+                        child: const Text('+',
+                            style:
+                                TextStyle(fontSize: 14, color: Colors.white)),
                       ),
                     ],
                   ),
-                  Text('Transpose')
+                  const Text('Transponer Nota')
                 ],
               ),
               Column(
@@ -80,84 +101,39 @@ class _CancioneroScreenState extends State<CancioneroScreen> {
                   Row(
                     children: [
                       ElevatedButton(
-                        onPressed: scrollSpeed <= 0
+                        onPressed: dataBlock.state.scrollSpeed <= 0
                             ? null
                             : () {
-                                setState(() {
-                                  scrollSpeed--;
-                                });
+                                int value = dataBlock.state.scrollSpeed;
+                                value--;
+                                dataBlock.changedScrollSpeed(value);
                               },
-                        child: Text('-'),
+                        child: const Text('-',
+                            style:
+                                TextStyle(fontSize: 14, color: Colors.white)),
                       ),
-                      SizedBox(width: 5),
-                      Text('$scrollSpeed'),
-                      SizedBox(width: 5),
+                      const SizedBox(width: 5),
+                      Text(dataBlock.state.scrollSpeed.toString()),
+                      const SizedBox(width: 5),
                       ElevatedButton(
                         onPressed: () {
-                          setState(() {
-                            scrollSpeed++;
-                          });
+                          int value = dataBlock.state.scrollSpeed;
+                          value++;
+                          dataBlock.changedScrollSpeed(value);
                         },
-                        child: Text('+'),
+                        child: const Text('+',
+                            style:
+                                TextStyle(fontSize: 14, color: Colors.white)),
                       ),
                     ],
                   ),
-                  Text('Auto Scroll')
+                  const Text('Auto Scroll')
                 ],
               ),
             ],
           ),
-          Divider(),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(12.0),
-              color: Colors.black,
-              child: LyricsRenderer(
-                lyrics: _lyrics,
-                textStyle: textStyle,
-                chordStyle: chordStyle,
-                onTapChord: (String chord) {
-                  print('pressed chord: $chord');
-                },
-                transposeIncrement: transposeIncrement,
-                scrollSpeed: scrollSpeed,
-                widgetPadding: 24,
-                lineHeight: 4,
-                horizontalAlignment: CrossAxisAlignment.start,
-                leadingWidget: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 16,
-                  ),
-                  child: Text(
-                    'Leading Widget',
-                    style: chordStyle,
-                  ),
-                ),
-                trailingWidget: Text(
-                  'Trailing Widget',
-                  style: chordStyle,
-                ),
-              ),
-            ),
-          )
         ],
       ),
     );
   }
-
-  @override
-  void initState() {
-    super.initState();
-    _lyrics = '''
-[C]Give me Freedom, [F]Give me fire
-[Am]Give me reason, [G]Take me higher
-[C]See the champions [F], Take the field now
-[Am]Unify us, [G]make us feel proud
- 
-[C]In the streets our, [F]hands are lifting
-[Am]As we lose our, [G]inhibition
-[C]Celebration, [F]its around us
-[Am]Every nation, [G]all around us
-''';
-  }
-}  
+}

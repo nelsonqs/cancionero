@@ -110,6 +110,15 @@ class CancioneroListScreen extends StatelessWidget {
                                           AppAsset.icoPerfilFilled,
                                           height: 31,
                                           width: 31)),
+                                  IconButton(
+                                      onPressed: () {
+                                        var param1 = itemCancionero.number;
+                                        context.push("/update/$param1");
+                                      },
+                                      icon: Image.asset(
+                                          AppAsset.icoMenuFilled,
+                                          height: 31,
+                                          width: 31)),        
                                 ],
                               ),
                             ],
