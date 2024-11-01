@@ -5,6 +5,7 @@ import 'package:multi/core/app_asset.dart';
 import 'package:multi/core/app_color.dart';
 import 'package:multi/features/products/presentation/cubit/list_item_form_cubit.dart';
 import 'package:multi/features/products/presentation/screens/navigation_list.dart';
+import 'package:badges/badges.dart' as badges;
 
 class ListScreen extends StatelessWidget {
   const ListScreen({super.key});
@@ -12,6 +13,8 @@ class ListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final listCubit = context.watch<ListItemFormCubit>();
+    final communalBankCubit = context.watch<ListItemFormCubit>().state.items;
+    
     return Scaffold(
         appBar: AppBar(
           actions: listCubit.state.stateValue != -1
@@ -20,10 +23,13 @@ class ListScreen extends StatelessWidget {
                     onPressed: () {
                       listCubit.changeState(1);
                     },
-                    icon: Image.asset(
-                      AppAsset.icoCarrito,
-                      width: 31,
-                      height: 31,
+                    icon: badges.Badge(
+                      badgeContent: Text('${communalBankCubit.length}'),
+                      child: Image.asset(
+                        AppAsset.icoCarrito,
+                        width: 31,
+                        height: 31,
+                      ),
                     ),
                   ),
                   IconButton(
