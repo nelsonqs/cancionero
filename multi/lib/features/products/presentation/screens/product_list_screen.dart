@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi/common/image_item.dart';
 import 'package:multi/common/product_data_base.dart';
-import 'package:multi/features/carrito/presentation/cubit/carrito_cubit.dart';
 import 'package:multi/features/products/presentation/cubit/list_item_form_cubit.dart';
 import 'package:multi/features/widgets/inputs/custom_card.dart';
 

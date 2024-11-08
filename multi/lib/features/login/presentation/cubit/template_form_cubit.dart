@@ -6,7 +6,7 @@ part 'template_state.dart';
 class TemplateFormCubit extends Cubit<TemplateFormState> {
   final SupabaseClient supabaseClient;
 
-  TemplateFormCubit(this.supabaseClient) : super(TemplateFormState());
+  TemplateFormCubit(this.supabaseClient) : super(const TemplateFormState());
 
   void chanheTemplate(String value) {
     emit(state.copyWith(template: value));

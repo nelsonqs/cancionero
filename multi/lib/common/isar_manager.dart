@@ -1,5 +1,4 @@
 import 'package:isar/isar.dart';
-import 'package:multi/models/isar/person.dart';
 import 'package:multi/models/isar/product_range_price.dart';
 import 'package:multi/models/isar/category.dart';
 import 'package:multi/models/isar/movement.dart';

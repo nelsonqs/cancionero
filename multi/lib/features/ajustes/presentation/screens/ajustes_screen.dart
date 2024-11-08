@@ -5,8 +5,6 @@ import 'package:multi/common/isar_manager.dart';
 import 'package:multi/core/app_color.dart';
 import 'package:multi/features/ajustes/presentation/cubit/ajustes_form_cubit.dart';
 import 'package:multi/features/widgets/inputs/custom_filled_button.dart';
-import 'package:multi/features/widgets/inputs/custom_text_login.dart';
-import 'package:multi/template_new_feature_dont_change_these/presentation/cubit/template_form_cubit.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 
 class AjustesScreen extends StatelessWidget {

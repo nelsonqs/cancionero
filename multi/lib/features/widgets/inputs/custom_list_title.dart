@@ -6,8 +6,7 @@ class CustomListTitle extends StatelessWidget {
   final Function() onPressed;
   final Icon iconButton;
 
-  const CustomListTitle({Key? key, this.title, this.subtitle, required this.onPressed, required this.iconButton})
-      : super(key: key);
+  const CustomListTitle({super.key, this.title, this.subtitle, required this.onPressed, required this.iconButton});
 
   @override
   Widget build(BuildContext context) {

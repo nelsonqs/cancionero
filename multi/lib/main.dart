@@ -22,7 +22,6 @@ GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
-  SupabaseClient supabaseOnLine;
   try {
     final pathDirectory = await getApplicationDocumentsDirectory();
     await Supabase.initialize(

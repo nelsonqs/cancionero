@@ -6,7 +6,6 @@ import 'package:multi/common/isar_manager.dart';
 import 'package:multi/models/isar/product.dart';
 import 'package:multi/models/isar/product_order.dart';
 import 'package:multi/models/item.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 part 'list_item_state.dart';
 
 class ListItemFormCubit extends Cubit<ListItemFormState> {
@@ -113,9 +112,10 @@ class ListItemFormCubit extends Cubit<ListItemFormState> {
     emit(state.copyWith(items: listItem));
   }
 
-  void addQuantityWithValue(int id, int value) async {
+  /*void addQuantityWithValue(int id, int value) async {
     List<Item> listItem = List.from(state.items);
     final int index = listItem.indexWhere((item) => item.id == id);
+    
     final int quantitySale = listItem[index].quantitySale;
 
     if ((quantitySale + value) >= (listItem[index].quantity)) {
@@ -124,13 +124,42 @@ class ListItemFormCubit extends Cubit<ListItemFormState> {
       listItem[index].quantitySale = listItem[index].quantitySale + value;
     }
     saveListItem(listItem);
+  }*/
+
+  void addQuantityWithValue(int id, int value) async {
+    List<Item> listItem = List.from(state.items);
+    final int index = listItem.indexWhere((item) => item.id == id);
+
+    if (index != -1) {
+      final Item currentItem = listItem[index];
+      final int newQuantitySale =
+          (currentItem.quantitySale + value) >= currentItem.quantity
+              ? currentItem.quantity
+              : currentItem.quantitySale + value;
+
+      // Crear una nueva instancia del item con la cantidad actualizada
+      final updatedItem = currentItem.copyWith(
+        inWishList: true,
+        quantitySale: newQuantitySale,
+      );
+
+      // Reemplazar el item en la lista
+      listItem[index] = updatedItem;
+
+      // Emitir el nuevo estado
+      saveListItem(listItem);
+    }
   }
 
   void removeProductToWhiteList(int id) async {
     List<Item> listItem = List.from(state.items);
     final int index = listItem.indexWhere((item) => item.id == id);
-    listItem[index].inWishList = false;
-    listItem[index].quantitySale = 0;
+    final Item currentItem = listItem[index];
+    final updatedItem = currentItem.copyWith(
+      inWishList: false,
+      quantitySale: 0,
+    );
+    listItem[index] = updatedItem;
     saveListItem(listItem);
   }
 
@@ -152,7 +181,7 @@ class ListItemFormCubit extends Cubit<ListItemFormState> {
     } else {
       result = totalWithoutDiscount;
     }
-    return result.toStringAsPrecision(2);
+    return result.toStringAsFixed(2);
   }
 
   void updateDefaultvalue() {
@@ -174,6 +203,7 @@ class ListItemFormCubit extends Cubit<ListItemFormState> {
     }
     saveListItem(items);
   }
+
   double totalWeightReport(List<ProductOrder> productOrderList) {
     if (productOrderList.isNotEmpty) {
       return productOrderList
@@ -183,5 +213,4 @@ class ListItemFormCubit extends Cubit<ListItemFormState> {
       return 0;
     }
   }
-
 }

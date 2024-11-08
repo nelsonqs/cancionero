@@ -12,7 +12,7 @@ class AppThemes {
       useMaterial3: true,
       scaffoldBackgroundColor: const Color(0xFFF4F4F4),
       scrollbarTheme: ScrollbarThemeData(
-        thumbVisibility: MaterialStateProperty.all(true),
+        thumbVisibility: WidgetStateProperty.all(true),
       ),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: LightThemeColor.accent,
@@ -26,7 +26,7 @@ class AppThemes {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(
+          backgroundColor: WidgetStateProperty.all<Color>(
             LightThemeColor.accent,
           ),
         ),
@@ -37,13 +37,13 @@ class AppThemes {
       ),
       filledButtonTheme: FilledButtonThemeData(
           style: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all<Color>(
+        foregroundColor: WidgetStateProperty.all<Color>(
           AppColors.white,
         ),
-        backgroundColor: MaterialStateProperty.all<Color>(
+        backgroundColor: WidgetStateProperty.all<Color>(
           LightThemeColor.accent,
         ),
-        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),

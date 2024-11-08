@@ -7,7 +7,6 @@ import 'package:multi/common/response_data.dart';
 import 'package:multi/core/app_constant_messages.dart';
 import 'package:multi/features/login/infrastructure/inputs/password.dart';
 import 'package:multi/features/login/infrastructure/inputs/username.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 part 'login_state.dart';
@@ -17,7 +16,6 @@ class LoginCubit extends Cubit<LoginFormState> {
 
   Future<ResponseData> onSubmit(BuildContext context) async {
     try {
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
       if (!state.isValid) {
         emit(state.copyWith(
           formStatus: FormStatusLogin.message,
@@ -38,7 +36,6 @@ class LoginCubit extends Cubit<LoginFormState> {
         final response = await supabase.auth.signInWithPassword(
             email: userWithEmail, password: state.password.value.trim());
         final Session? session = response.session;
-        final usuarioSupa = (supabase.auth.currentUser)?.id;
         // BlocProvider.of<SessionCubit>(context).chargeDefaultLatLong(response1['cod_agencia']);
         // loadCities(context, response1['departamento']);
         if (session != null) {

@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi/common/constant.dart';
-import 'package:multi/features/ajustes/presentation/cubit/ajustes_form_cubit.dart';
 import 'package:multi/features/ajustes/presentation/screens/ajustes_screen.dart';
 import 'package:multi/features/carrito/presentation/screens/carrito_screen.dart';
 import 'package:multi/features/clientes/presentation/screens/clientes_screen.dart';
@@ -60,7 +59,6 @@ Future<String?> _redirectToLogin(
   try {
     final session = supabase.auth.currentSession;
     if (session != null) {
-      final usuarioSupa = (supabase.auth.currentUser)?.id;
       /*BlocProvider.of<SessionCubit>(context)
             .chargeDefaultLatLong(int.parse(response1['cod_agencia']));*/
       return null;
