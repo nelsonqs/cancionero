@@ -20,5 +20,4 @@ class Product {
   late int quantityUvCaja;
   late double weightUnit;
   late int orderi;
-  
 }

@@ -73,6 +73,52 @@ class AjustesScreen extends StatelessWidget {
           Center(
             child: CustomFilledButton(
                 onPreseed: () {
+                  ajusteCubit.onChargeClientCloudToLocalDB(context).then((value) {
+                    if (value.state) {
+                      final snackBar = SnackBar(
+                        elevation: 0,
+                        behavior: SnackBarBehavior.floating,
+                        backgroundColor: Colors.transparent,
+                        content: AwesomeSnackbarContent(
+                          title: 'Done!',
+                          message: 'Doneeeee!',
+
+                          /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
+                          contentType: ContentType.failure,
+                        ),
+                      );
+
+                      ScaffoldMessenger.of(context)
+                        ..hideCurrentSnackBar()
+                        ..showSnackBar(snackBar);
+                    }
+                    if (!value.state) {
+                      final snackBar = SnackBar(
+                        elevation: 0,
+                        behavior: SnackBarBehavior.floating,
+                        backgroundColor: Colors.transparent,
+                        content: AwesomeSnackbarContent(
+                          title: 'Error!',
+                          message:
+                              'This is an example error message that will be shown in the body of snackbar!',
+
+                          /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
+                          contentType: ContentType.failure,
+                        ),
+                      );
+
+                      ScaffoldMessenger.of(context)
+                        ..hideCurrentSnackBar()
+                        ..showSnackBar(snackBar);
+                    }
+                  });
+                },
+                prefixIcon: const Icon(Icons.safety_check_rounded),
+                label: const Text('Cargar Clientes desde la Nube a Bd Local')),
+          ),
+          Center(
+            child: CustomFilledButton(
+                onPreseed: () {
                   ajusteCubit.compressImage(context).then((value) {
                     if (value.state) {
                       final snackBar = SnackBar(
@@ -206,7 +252,7 @@ class AjustesScreen extends StatelessWidget {
                   });
                 },
                 prefixIcon: const Icon(Icons.safety_check_rounded),
-                label: const Text('Comprimir Imagenes')),
+                label: const Text('Cargar rango de precios')),
           ),
         ],
       ),

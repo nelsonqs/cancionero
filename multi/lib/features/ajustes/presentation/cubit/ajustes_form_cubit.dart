@@ -12,6 +12,7 @@ import 'package:multi/common/response_data.dart';
 import 'package:multi/core/app_constant_messages.dart';
 
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:multi/models/isar/cliente.dart';
 import 'package:multi/models/isar/product.dart';
 import 'package:multi/models/isar/product_range_price.dart';
 part 'ajustes_state.dart';
@@ -65,6 +66,41 @@ class AjustesFormCubit extends Cubit<AjustesFormState> {
     } catch (e) {
       return ResponseData(false, AppConstantMessage.errorImageCompresed);
     }
+  }
+
+  Future<ResponseData> onChargeClientCloudToLocalDB(BuildContext context) async {
+    Isar isar = IsarManager().isar;
+
+    try {
+      final clientCount = await isar.clientes.count();
+      debugPrint('clientebefore: $clientCount');
+
+      final productsSupabase =
+          await supabase.from('cliente').select('*');
+
+      if (clientCount == 0) {
+        for (var element in productsSupabase) {
+          Cliente clidata =Cliente();
+          clidata.codigo = element['codigo'].toString();
+          clidata.nombreCliente = element['nombre_cliente'];
+          clidata.nitCliente = element['nit_cliente'];
+          clidata.nombreFactura = element['nombre_factura'];
+          clidata.nombreContacto = element['nombre_contacto'];
+          clidata.direccion = element['direccion'];
+          clidata.celular = element['celular'];
+          saveClientInToDb(clidata, isar);
+        }
+      }
+      final cliAfter = await isar.clientes.count();
+      debugPrint('clicountAfter: $cliAfter');
+      return ResponseData(true, AppConstantMessage.success);
+    } catch (e) {
+      return ResponseData(false, AppConstantMessage.errorImageCompresed);
+    }
+  }
+
+  Future<void> saveClientInToDb(Cliente clien, Isar isar) async {
+    isar.writeTxnSync<int>(() => isar.clientes.putSync(clien));
   }
 
   Future<void> saveProductInToDb(Product product, Isar isar) async {

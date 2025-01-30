@@ -17,7 +17,7 @@ class CarritoScreen extends StatelessWidget {
   // Ask Get to finvar "controller"
   //final ProductController _p = Get.find<ProductController>();
 
-  CarritoScreen({Key? key}) : super(key: key);
+  const CarritoScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

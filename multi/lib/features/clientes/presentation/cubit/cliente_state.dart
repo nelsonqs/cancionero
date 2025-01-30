@@ -3,17 +3,19 @@ part of 'cliente_form_cubit.dart';
 enum ClienteFormStatus { initial, loading, loaded, error, message, empty }
 
 class ClienteFormState extends Equatable {
-  final String template;
+  final List<Cliente> clienteLst;
+
   const ClienteFormState({
-    this.template = '',
+    this.clienteLst = const [],
+    
   });
   copyWith({
-    String? template,
+    List<Cliente>? clienteLst,
   }) =>
       ClienteFormState(
-        template: template ?? this.template,
+        clienteLst: clienteLst ?? this.clienteLst,
       );
 
   @override
-  List<Object?> get props => [template];
+  List<Object?> get props => [clienteLst];
 }

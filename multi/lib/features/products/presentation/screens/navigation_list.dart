@@ -42,7 +42,7 @@ class NavigationList extends StatelessWidget {
           ),
           Container(
             alignment: Alignment.center,
-            child: CarritoScreen(),
+            child: const CarritoScreen(),
           ), () {
         listCubit.changeState(-1);
       }),

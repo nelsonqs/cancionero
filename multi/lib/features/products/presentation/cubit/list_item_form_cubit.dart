@@ -5,14 +5,16 @@ import 'package:isar/isar.dart';
 import 'package:multi/common/isar_manager.dart';
 import 'package:multi/models/isar/product.dart';
 import 'package:multi/models/isar/product_order.dart';
+import 'package:multi/models/isar/product_range_price.dart';
 import 'package:multi/models/item.dart';
 part 'list_item_state.dart';
 
 class ListItemFormCubit extends Cubit<ListItemFormState> {
   ListItemFormCubit() : super(const ListItemFormState());
 
+  IsarManager isarManager = IsarManager();
+
   Future getProducts() async {
-    IsarManager isarManager = IsarManager();
     Isar isar = isarManager.isar;
     List<Item> items = List.from(state.items);
     try {
@@ -59,55 +61,6 @@ class ListItemFormCubit extends Cubit<ListItemFormState> {
     emit(state.copyWith(stateValue: i));
   }
 
-  void removeQuantity(int id) async {
-    List<Item> listItem = List.from(state.items);
-    final int index = listItem.indexWhere((item) => item.id == id);
-
-    if (index != -1) {
-      final Item currentItem = listItem[index];
-      final int newQuantitySale = (currentItem.quantitySale - 1) <= 1
-          ? 0
-          : currentItem.quantitySale - 1;
-
-      // Crear una nueva instancia del item con la cantidad actualizada
-      final updatedItem = currentItem.copyWith(
-        inWishList: newQuantitySale == 0 ? false : currentItem.inWishList,
-        quantitySale: newQuantitySale,
-      );
-
-      // Reemplazar el item en la lista
-      listItem[index] = updatedItem;
-
-      // Emitir el nuevo estado
-      emit(state.copyWith(items: listItem));
-    }
-  }
-
-  void addQuantity(int id) async {
-    List<Item> listItem = List.from(state.items);
-    final int index = listItem.indexWhere((item) => item.id == id);
-
-    if (index != -1) {
-      final Item currentItem = listItem[index];
-      final int newQuantitySale =
-          (currentItem.quantitySale + 1) >= currentItem.quantity
-              ? currentItem.quantity
-              : currentItem.quantitySale + 1;
-
-      // Crear una nueva instancia del item con la cantidad actualizada
-      final updatedItem = currentItem.copyWith(
-        inWishList: true,
-        quantitySale: newQuantitySale,
-      );
-
-      // Reemplazar el item en la lista
-      listItem[index] = updatedItem;
-
-      // Emitir el nuevo estado
-      saveListItem(listItem);
-    }
-  }
-
   void saveListItem(List<Item> listItem) {
     emit(state.copyWith(items: listItem));
   }
@@ -126,39 +79,15 @@ class ListItemFormCubit extends Cubit<ListItemFormState> {
     saveListItem(listItem);
   }*/
 
-  void addQuantityWithValue(int id, int value) async {
-    List<Item> listItem = List.from(state.items);
-    final int index = listItem.indexWhere((item) => item.id == id);
-
-    if (index != -1) {
-      final Item currentItem = listItem[index];
-      final int newQuantitySale =
-          (currentItem.quantitySale + value) >= currentItem.quantity
-              ? currentItem.quantity
-              : currentItem.quantitySale + value;
-
-      // Crear una nueva instancia del item con la cantidad actualizada
-      final updatedItem = currentItem.copyWith(
-        inWishList: true,
-        quantitySale: newQuantitySale,
-      );
-
-      // Reemplazar el item en la lista
-      listItem[index] = updatedItem;
-
-      // Emitir el nuevo estado
-      saveListItem(listItem);
-    }
-  }
-
   void removeProductToWhiteList(int id) async {
     List<Item> listItem = List.from(state.items);
     final int index = listItem.indexWhere((item) => item.id == id);
     final Item currentItem = listItem[index];
+    double precioActualizado =
+        await obtainPriceCalculated(currentItem, 0, listItem);
+
     final updatedItem = currentItem.copyWith(
-      inWishList: false,
-      quantitySale: 0,
-    );
+        inWishList: false, quantitySale: 0, price: precioActualizado);
     listItem[index] = updatedItem;
     saveListItem(listItem);
   }
@@ -212,5 +141,156 @@ class ListItemFormCubit extends Cubit<ListItemFormState> {
     } else {
       return 0;
     }
+  }
+
+  void removeQuantity(int id) async {
+    List<Item> listItem = List.from(state.items);
+    final int index = listItem.indexWhere((item) => item.id == id);
+
+    if (index != -1) {
+      final Item currentItem = listItem[index];
+      final int newQuantitySale = (currentItem.quantitySale - 1) <= 1
+          ? 0
+          : currentItem.quantitySale - 1;
+
+      double precioActualizado =
+          await obtainPriceCalculated(currentItem, newQuantitySale, listItem);
+
+      // Crear una nueva instancia del item con la cantidad actualizada
+      final updatedItem = currentItem.copyWith(
+          inWishList: newQuantitySale == 0 ? false : currentItem.inWishList,
+          quantitySale: newQuantitySale,
+          price: precioActualizado);
+
+      // Reemplazar el item en la lista
+      listItem[index] = updatedItem;
+
+      // Emitir el nuevo estado
+      emit(state.copyWith(items: listItem));
+    }
+  }
+
+  void addQuantityWithValue(int id, int value) async {
+    List<Item> listItem = List.from(state.items);
+    final int index = listItem.indexWhere((item) => item.id == id);
+
+    if (index != -1) {
+      final Item currentItem = listItem[index];
+      final int newQuantitySale =
+          (currentItem.quantitySale + value) >= currentItem.quantity
+              ? currentItem.quantity
+              : currentItem.quantitySale + value;
+
+      double precioActualizado =
+          await obtainPriceCalculated(currentItem, newQuantitySale, listItem);
+      // Crear una nueva instancia del item con la cantidad actualizada
+      final updatedItem = currentItem.copyWith(
+        inWishList: true,
+        quantitySale: newQuantitySale,
+        price: precioActualizado,
+      );
+
+      // Reemplazar el item en la lista
+      listItem[index] = updatedItem;
+
+      // Emitir el nuevo estado
+      saveListItem(listItem);
+    }
+  }
+
+  void addQuantity(int id) async {
+    List<Item> listItem = List.from(state.items);
+    final int index = listItem.indexWhere((item) => item.id == id);
+
+    if (index != -1) {
+      final Item currentItem = listItem[index];
+      final int newQuantitySale =
+          (currentItem.quantitySale + 1) >= currentItem.quantity
+              ? currentItem.quantity
+              : currentItem.quantitySale + 1;
+
+      double precioActualizado =
+          await obtainPriceCalculated(currentItem, newQuantitySale, listItem);
+
+      final updatedItem = currentItem.copyWith(
+        inWishList: true,
+        quantitySale: newQuantitySale,
+        price: precioActualizado,
+      );
+
+      listItem[index] = updatedItem;
+
+      saveListItem(listItem);
+    }
+  }
+
+  Future<double> obtainPriceCalculated(
+      Item currentItem, int newQuantitySale, List<Item> listItem) async {
+    Isar isar = isarManager.isar;
+    double precioActualizado = 0;
+    ProductRangePrice? productRangePrice = await isar.productRangePrices
+        .filter()
+        .itemIdEqualTo(currentItem.id)
+        .findFirst();
+
+    if (productRangePrice != null) {
+      final productRangePrices = await isar.productRangePrices
+          .filter()
+          .groupEqualTo(productRangePrice.group)
+          .findAll();
+
+      if (productRangePrices.isNotEmpty && listItem.isNotEmpty) {
+        int quantityGroup = calculateSumQuantity(listItem, productRangePrices) +
+            newQuantitySale;
+        precioActualizado = calculatePrice(quantityGroup, productRangePrices);
+        saveChanges(listItem, productRangePrices, precioActualizado);
+      }
+    }
+    return precioActualizado;
+  }
+
+  int calculateSumQuantity(
+      List<Item> listItem, List<ProductRangePrice> productRangePrices) {
+    return productRangePrices.fold(0, (total, product) {
+      return total +
+          listItem
+              .where((item) => item.id == product.id)
+              .fold(0, (subtotal, item) => subtotal + item.quantitySale);
+    });
+  }
+
+  double calculatePrice(
+      int quantityGroup, List<ProductRangePrice> productRangePrices) {
+    for (var productRangePrice in productRangePrices) {
+      if (quantityGroup >= productRangePrice.rangeA &&
+          quantityGroup <= productRangePrice.rangeB) {
+        return productRangePrice.unitPrice;
+      }
+    }
+    return productRangePrices.isNotEmpty ? productRangePrices.first.price : 0.0;
+  }
+
+  void saveChanges(List<Item> listItem,
+      List<ProductRangePrice> productRangePrices, double priceUpdated) {
+    List<Item> updatedList = listItem.map((item) {
+      final product =
+          productRangePrices.firstWhere((product) => product.itemId == item.id,
+              orElse: () => ProductRangePrice()
+                ..boxPrice = 0.0
+                ..unitPrice = 0.0
+                ..price = 0.0
+                ..discount = 0.0
+                ..rangeA = 0
+                ..rangeB = 0
+                ..group = 0
+                ..itemId = 0
+                ..id = 0);
+      if (product.price > 0) {
+        return item.copyWith(price: priceUpdated);
+      }
+      return item;
+    }).toList();
+
+    saveListItem(updatedList);
   }
 }

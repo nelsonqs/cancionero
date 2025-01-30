@@ -108,7 +108,7 @@ ProductRangePrice _productRangePriceDeserialize(
   object.discount = reader.readDouble(offsets[1]);
   object.group = reader.readLong(offsets[2]);
   object.id = id;
-  object.itemId = reader.readLong(offsets[3]);
+  object.itemId = reader.readLongOrNull(offsets[3]);
   object.price = reader.readDouble(offsets[4]);
   object.rangeA = reader.readLong(offsets[5]);
   object.rangeB = reader.readLong(offsets[6]);
@@ -130,7 +130,7 @@ P _productRangePriceDeserializeProp<P>(
     case 2:
       return (reader.readLong(offset)) as P;
     case 3:
-      return (reader.readLong(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 4:
       return (reader.readDouble(offset)) as P;
     case 5:
@@ -485,7 +485,25 @@ extension ProductRangePriceQueryFilter
   }
 
   QueryBuilder<ProductRangePrice, ProductRangePrice, QAfterFilterCondition>
-      itemIdEqualTo(int value) {
+      itemIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'itemId',
+      ));
+    });
+  }
+
+  QueryBuilder<ProductRangePrice, ProductRangePrice, QAfterFilterCondition>
+      itemIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'itemId',
+      ));
+    });
+  }
+
+  QueryBuilder<ProductRangePrice, ProductRangePrice, QAfterFilterCondition>
+      itemIdEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'itemId',
@@ -496,7 +514,7 @@ extension ProductRangePriceQueryFilter
 
   QueryBuilder<ProductRangePrice, ProductRangePrice, QAfterFilterCondition>
       itemIdGreaterThan(
-    int value, {
+    int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -510,7 +528,7 @@ extension ProductRangePriceQueryFilter
 
   QueryBuilder<ProductRangePrice, ProductRangePrice, QAfterFilterCondition>
       itemIdLessThan(
-    int value, {
+    int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -524,8 +542,8 @@ extension ProductRangePriceQueryFilter
 
   QueryBuilder<ProductRangePrice, ProductRangePrice, QAfterFilterCondition>
       itemIdBetween(
-    int lower,
-    int upper, {
+    int? lower,
+    int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -1119,7 +1137,7 @@ extension ProductRangePriceQueryProperty
     });
   }
 
-  QueryBuilder<ProductRangePrice, int, QQueryOperations> itemIdProperty() {
+  QueryBuilder<ProductRangePrice, int?, QQueryOperations> itemIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'itemId');
     });

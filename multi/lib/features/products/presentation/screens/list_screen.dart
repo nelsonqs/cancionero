@@ -13,8 +13,13 @@ class ListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final listCubit = context.watch<ListItemFormCubit>();
-    final communalBankCubit = context.watch<ListItemFormCubit>().state.items;
-    
+
+    final listItems = context
+        .watch<ListItemFormCubit>()
+        .state
+        .items
+        .where((itm) => itm.quantitySale > 0);
+
     return Scaffold(
         appBar: AppBar(
           actions: listCubit.state.stateValue != -1
@@ -24,7 +29,13 @@ class ListScreen extends StatelessWidget {
                       listCubit.changeState(1);
                     },
                     icon: badges.Badge(
-                      badgeContent: Text('${communalBankCubit.length}'),
+                      position:
+                          badges.BadgePosition.bottomEnd(bottom: -8, end: -6),
+                      badgeColor: Colors.redAccent,
+                      badgeContent: Text(
+                        '${listItems.length}',
+                        style: const TextStyle(color: Colors.white),
+                      ),
                       child: Image.asset(
                         AppAsset.icoCarrito,
                         width: 31,

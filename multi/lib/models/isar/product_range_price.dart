@@ -4,7 +4,7 @@ part 'product_range_price.g.dart';
 @Collection()
 class ProductRangePrice {
   Id id = Isar.autoIncrement;
-  late int itemId;
+  int? itemId;
   late int group;
   late double price;
   late int rangeA;
